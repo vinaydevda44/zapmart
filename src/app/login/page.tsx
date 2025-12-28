@@ -28,8 +28,6 @@ const Login = () => {
   const router=useRouter();
   const session =useSession()
 
-  console.log(session)
-
   const handleLogin= async (e:FormEvent)=>{
     e.preventDefault()
     setLoading(true)
@@ -37,6 +35,7 @@ const Login = () => {
         await signIn("credentials",{
             email,password
         })
+        router.push("/")
         setLoading(false)
     }
     catch(error){
@@ -144,15 +143,19 @@ const Login = () => {
           <span className="flex-1 h-px bg-gray-200"></span>
         </div>
 
-        <button
-            onClick={()=>signIn("google")}
+        <div
+            onClick={()=>signIn("google",{callbackUrl:"/"})}
           className="flex items-center justify-center gap-3 border border-gray-300 hover:bg-gray-50
         py-3 rounded-xl text-gray-700 font-medium transition-all duration-200"
         >
           <Image src={googleImage} width={25} height={25} alt="google" />
           Continue with google
-        </button>
+        </div>
+
       </motion.form>
+
+       
+
       <p className="cursor-pointer text-gray-600 mt-6 text-sm flex items-center gap-1" 
       onClick={()=>router.push("/register")}>
         Want to create an account ?

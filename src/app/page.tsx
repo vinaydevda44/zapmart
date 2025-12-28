@@ -1,12 +1,25 @@
-import Image from "next/image";
+import { auth } from '@/auth'
+import EditRoleMobile from '@/components/EditRoleMobile'
+import connectDb from '@/lib/db'
+import User from '@/models/user.model'
+import { redirect } from 'next/navigation'
+import React from 'react'
 
-export default function Home() {
+export default async function Home() {
+   await connectDb()
+      const session=await auth()
+      const user=await User.findById(session?.user?.id)
+      if(!user){
+          redirect("/login")
+      }
+  
+      const inComplete=!user.mobile || !user.role || (!user.mobile && user.role=="user")
+      if(inComplete){
+          return <EditRoleMobile/>
+      }
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-      
-        
-      </main>
+    <div>
+
     </div>
   );
 }
