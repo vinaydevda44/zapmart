@@ -1,18 +1,7 @@
 "use client";
-import {
-  Boxes,
-  ClipboardCheck,
-  Cross,
-  LogOut,
-  Menu,
-  Package,
-  Plus,
-  PlusCircle,
-  Search,
-  ShoppingCartIcon,
-  User,
-  X,
-} from "lucide-react";
+
+import { RootState } from "@/redux/store";
+import {Boxes,ClipboardCheck,Cross,LogOut,Menu,Package,Plus,PlusCircle,Search,ShoppingCartIcon,User,X,} from "lucide-react";
 import mongoose from "mongoose";
 import { AnimatePresence, motion } from "motion/react";
 import { signOut } from "next-auth/react";
@@ -20,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useSelector } from "react-redux";
 
 interface IUser {
   _id?: mongoose.Types.ObjectId;
@@ -35,6 +25,8 @@ const Nav = ({ user }: { user: IUser }) => {
   const [searchBarOpen, setSearchBarOpen] = useState(false);
 
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const {cartData}=useSelector((state:RootState)=>state.cart)
 
   const profileDropDown = useRef<HTMLDivElement>(null);
 
@@ -160,7 +152,7 @@ const Nav = ({ user }: { user: IUser }) => {
             </div>
 
             <Link
-              href={""}
+              href={"/user/cart"}
               className="relative bg-white rounded-full w-11 h-11 flex items-center
         justify-center shadow-md hover:scale-105 transition"
             >
@@ -169,7 +161,7 @@ const Nav = ({ user }: { user: IUser }) => {
                 className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center
         justify-center rounded-full font-semibold shadow"
               >
-                0
+                {cartData.length}
               </span>
             </Link>
           </>
