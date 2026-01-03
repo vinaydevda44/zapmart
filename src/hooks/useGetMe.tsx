@@ -11,14 +11,14 @@ const useGetMe = () => {
     const getMe=async()=>{
         try{
             const result = await axios.get("/api/me")
-            dispatch(setUserData(result.data))
+            dispatch(setUserData(result.data.user))
         }
         catch(error){
             console.log(error)
         }
     }
     getMe()
-  },[])
+  },[dispatch])
 }
 
 export default useGetMe

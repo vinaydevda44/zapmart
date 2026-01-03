@@ -11,11 +11,12 @@ interface IUser {
   image?: string;
 }
 interface IUserSlice {
-  userData: IUser | null;
+  userData: IUser |null;
 }
 
 const initialState: IUserSlice = {
-  userData: null,
+  userData:null
+  
 };
 const userSlice = createSlice({
   name: "user",
