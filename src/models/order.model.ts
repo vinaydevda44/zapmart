@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 
-interface IOrder {
+export interface IOrder {
   _id?: mongoose.Types.ObjectId;
   user: mongoose.Types.ObjectId;
   items: [
@@ -26,6 +26,7 @@ interface IOrder {
     latitude: number;
     longitude: number;
   };
+  isPaid:boolean
   status: "pending" | "out of delivery" | "delivered";
   createdAt?: Date;
   updatedAt?: Date;
@@ -77,6 +78,10 @@ const orderSchema = new mongoose.Schema<IOrder>(
       mobile: String,
       latitude: Number,
       longitude: Number,
+    },
+    isPaid:{
+        type:Boolean,
+        default:false
     },
     status: {
       type: String,

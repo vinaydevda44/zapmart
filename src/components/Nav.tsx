@@ -187,7 +187,7 @@ const Nav = ({ user }: { user: IUser }) => {
                 View Grocery
               </Link>
               <Link
-                href={""}
+                href={"/admin/manage-orders"}
                 className="flex items-center gap-2 bg-white text-green-700 font-semibold
           px-4 py-2 rounded-full hover:bg-green-100 transition-all"
               >
@@ -255,7 +255,7 @@ const Nav = ({ user }: { user: IUser }) => {
                 </div>
                 {user.role == "user" && (
                   <Link
-                    href={""}
+                    href={"/user/my-orders"}
                     className="flex items-center gap-2 px-3 py-3 hover:bg-green-50 rounded-lg
                 text-gray-700 font-medium"
                     onClick={() => setOpen(false)}
