@@ -26,6 +26,8 @@ export interface IOrder {
     latitude: number;
     longitude: number;
   };
+  assignDeliveryBoy?:mongoose.Types.ObjectId
+  assignment?:mongoose.Types.ObjectId
   isPaid:boolean
   status: "pending" | "out of delivery" | "delivered";
   createdAt?: Date;
@@ -78,6 +80,16 @@ const orderSchema = new mongoose.Schema<IOrder>(
       mobile: String,
       latitude: Number,
       longitude: Number,
+    },
+    assignment:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"DeliveryAssignment",
+      default:null
+    },
+    assignDeliveryBoy:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"User"
+
     },
     isPaid:{
         type:Boolean,
