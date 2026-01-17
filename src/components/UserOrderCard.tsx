@@ -1,10 +1,52 @@
 "use client";
-import { IOrder } from "@/models/order.model";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { ChevronDown, ChevronUp, CreditCard, MapPin, Package, Truck, TruckElectric } from "lucide-react";
+import { ChevronDown, ChevronUp, CreditCard, MapPin, Package, Truck, UserCheck, } from "lucide-react";
 import Image from "next/image";
+import { getSocket } from "@/lib/socket";
+import { IUser } from "@/models/user.model";
+import mongoose from "mongoose";
+import { useRouter } from "next/navigation";
+
+interface IOrder {
+  _id?: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId;
+  items: [
+    {
+      grocery: mongoose.Types.ObjectId;
+      name: string;
+      price: string;
+      unit: string;
+      image: string;
+      quantity: number;
+    }
+  ];
+  totalAmount: number;
+  paymentMethod: "cod" | "online";
+  address: {
+    fullName: string;
+    city: string;
+    state: string;
+    pincode: string;
+    fullAddress: string;
+    mobile: string;
+    latitude: number;
+    longitude: number;
+  };
+  assignDeliveryBoy?: IUser
+  assignment?:mongoose.Types.ObjectId
+  isPaid:boolean
+  status: "pending" | "out of delivery" | "delivered";
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+
+
 const UserOrderCard = ({ order }: { order: IOrder }) => {
+
+   const [status,setStatus]=useState(order.status)
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
@@ -17,7 +59,20 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
         return "bg-gray-100 text-gray-700 border-gray-300";
     }
   };
+
+  useEffect(():any=>{
+    const socket=getSocket()
+    socket.on("order-status-update",(data)=>{
+      if(data.orderId.toString() == order?._id?.toString()){
+        setStatus(data.status)
+      }
+    })
+    return ()=>socket.off("order-status-update")
+  },[])
+
+ 
   const [expanded,setExpanded]=useState(false)
+  const router=useRouter();
   return (
     <motion.div
       className="bg-white rounded-2xl border border-gray-100 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden"
@@ -52,10 +107,10 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
           </span>
           <span
             className={`px-3 py-1 text-xs font-semibold border rounded-full ${getStatusColor(
-              order.status
+              status
             )}`}
           >
-            {order.status}
+            {status}
           </span>
         </div>
       </div>
@@ -72,7 +127,31 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
             Online Payment
           </div>
         )}
+        
+      {order.assignDeliveryBoy && <> <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl 
+          p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3 text-sm text-gray-700">
+              <UserCheck className="text-blue-600" size={18}/>
+              <div className="font-semibold text-gray-800">
+                <p className="">Assigned to: <span>{order.assignDeliveryBoy.name}</span></p>
+                <p className="text-xs text-gray-600">📞+91 {order.assignDeliveryBoy.mobile}</p>
+              </div>
+            </div>
+            <a href={`tel:${order.assignDeliveryBoy.mobile}`}
+            className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-blue-700
+            transition">Call</a>
+            </div>
+            
+            <button className="w-full flex items-center justify-center gap-2 bg-green-600 text-white font-semibold
+            px-4 py-2 rounded-xl shadow hover:bg-green-700 transition" 
+            onClick={()=>router.push(`/user/track-order/${order._id?.toString()}`)}>
+              <Truck size={18}/>
+              Track Your Order
+            </button>
+            </>
+            }
 
+            
         <div className="flex items-center gap-2 text-gray-700 text-sm">
             <MapPin size={16} className="text-green-600" />
             <span className="truncate"> {order.address.fullAddress}</span>
@@ -123,7 +202,7 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
         <div className="border-t pt-3 flex justify-between items-center text-sm font-semibold text-gray-800">
             <div className="flex items-center gap-2 text-gray-700 text-sm">
                 <Truck size={16} className="text-green-600"/>
-                <span>Delivery: <span className="text-green-700 font-semibold">{order.status}</span></span>
+                <span>Delivery: <span className="text-green-700 font-semibold">{status}</span></span>
             </div>
             <div>
                 Total: <span className="text-green-700 font-bold">₹{order.totalAmount}</span>

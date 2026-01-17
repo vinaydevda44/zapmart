@@ -6,7 +6,7 @@ export async function GET(req:NextRequest) {
 
     try{
         await connectDb();
-        const orders=await Order.find({}).populate("user").sort({createdAt:-1})
+        const orders=await Order.find({}).populate("user assignDeliveryBoy").sort({createdAt:-1})
         return NextResponse.json(
             orders,
             {status:200}

@@ -1,16 +1,51 @@
 "use client"
-import { IOrder } from "@/models/order.model";
-import React, { useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { Axis3D, ChevronDown, ChevronUp, CreditCard, MapPin, Package, Phone, Truck, User } from "lucide-react";
+import { ChevronDown, ChevronUp, CreditCard, MapPin, Package, Phone, Truck, User, UserCheck } from "lucide-react";
 import Image from "next/image";
 import axios from "axios";
+import mongoose from "mongoose";
+import { IUser } from "@/models/user.model";
+
+interface IOrder {
+  _id?: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId;
+  items: [
+    {
+      grocery: mongoose.Types.ObjectId;
+      name: string;
+      price: string;
+      unit: string;
+      image: string;
+      quantity: number;
+    }
+  ];
+  totalAmount: number;
+  paymentMethod: "cod" | "online";
+  address: {
+    fullName: string;
+    city: string;
+    state: string;
+    pincode: string;
+    fullAddress: string;
+    mobile: string;
+    latitude: number;
+    longitude: number;
+  };
+  assignDeliveryBoy?: IUser
+  assignment?:mongoose.Types.ObjectId
+  isPaid:boolean
+  status: "pending" | "out of delivery" | "delivered";
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 const AdminOrderCard = ({ order }: { order: IOrder }) => {
 
     const statusOptions=["pending","out of delivery"]
     const [expanded,setExpanded]=useState(false)
-    const [status,setStatus]=useState<string>(order.status);
+    const [status,setStatus]=useState<string>("pending");
 
     const updateStatus=async (orderId:string,status:string)=>{
       try{
@@ -23,6 +58,11 @@ const AdminOrderCard = ({ order }: { order: IOrder }) => {
       }
     }
 
+    useEffect(()=>{
+      setStatus(order.status)
+    },[order])
+
+    
   return (
     <motion.div
       key={order._id?.toString()}
@@ -73,6 +113,23 @@ const AdminOrderCard = ({ order }: { order: IOrder }) => {
                 : "Online Payment"}
             </span>
           </p>
+
+          {order.assignDeliveryBoy && <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl 
+          p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3 text-sm text-gray-700">
+              <UserCheck className="text-blue-600" size={18}/>
+              <div className="font-semibold text-gray-800">
+                <p className="">Assigned to: <span>{order.assignDeliveryBoy.name}</span></p>
+                <p className="text-xs text-gray-600">📞+91 {order.assignDeliveryBoy.mobile}</p>
+              </div>
+            </div>
+            <a href={`tel:${order.assignDeliveryBoy.mobile}`}
+            className="bg-blue-600 text-white text-xs px-3 py-1.5 rounded-lg hover:bg-blue-700
+            transition">Call</a>
+            </div>}
+
+
+
         </div>
 
         <div className="flex flex-col items-start md:items-end gap-2">
