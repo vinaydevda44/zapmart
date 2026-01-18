@@ -45,7 +45,8 @@ const LiveMap = ({ userLocation, deliveryBoyLocation }: Iprops) => {
   
 
   return (
-    <div className="w-full h-125 rounded-xl overflow-hidden shadow relative">
+    <div className="w-full h-[500px] md:h-[400px] rounded-xl overflow-hidden shadow relative">
+
       <MapContainer
         center={center as LatLngExpression}
         zoom={13}

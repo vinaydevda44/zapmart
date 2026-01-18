@@ -1,14 +1,14 @@
 import connectDb from "@/lib/db";
-import ChatRoom from "@/models/chatRoom.model";
 import Message from "@/models/message.model";
+import Order from "@/models/order.model";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     await connectDb();
     const {  roomId, } = await req.json();
 
-    const room = await ChatRoom.findById(roomId);
+    const room = await Order.findById(roomId);
 
     if (!room) {
       return NextResponse.json(

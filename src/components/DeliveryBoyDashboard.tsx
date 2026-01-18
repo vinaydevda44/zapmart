@@ -94,7 +94,7 @@ const DeliveryBoyDashboard = () => {
 
   if(activeOrder && userLocation){
     return (
-      <div className="p-4 pt-30 min-h-screen bg-gray-50">
+      <div className="p-4 pt-28 min-h-screen bg-gray-50">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-2xl font-bold text-green-700 mb-2">Active Delivery</h1>
           <p className="text-gray-600 text-sm mb-4">order#{activeOrder.order._id.slice(-6)}</p>
@@ -118,9 +118,9 @@ const DeliveryBoyDashboard = () => {
           <p className="text-gray-500">No assignments available</p>
         )}
 
-        {assignments.map((a) => (
+        {assignments.map((a,index) => (
           <div
-            key={a._id}
+            key={index}
             className="p-5 bg-white rounded-xl shadow mb-4 border"
           >
             <p>
