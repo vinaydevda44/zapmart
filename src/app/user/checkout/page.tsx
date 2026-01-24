@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import "leaflet/dist/leaflet.css";
 import {
   ArrowLeft,
   Building,
@@ -20,16 +19,11 @@ import {
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
-import L, { LatLngExpression } from "leaflet";
 import axios from "axios";
-import { OpenStreetMapProvider } from "leaflet-geosearch";
+import dynamic from "next/dynamic";
 
-const markerIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/128/9131/9131546.png",
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
-});
+const CheckoutMap=dynamic(()=>import("@/components/CheckoutMap"),{ssr:false})
+
 
 const Checkout = () => {
   const router = useRouter();
@@ -79,55 +73,34 @@ const Checkout = () => {
       );
     }
   }, []);
+  useEffect(() => {
+        const fetchAddress = async () => {
+          if (!position) {
+            return;
+          }
+          try {
+            const result = await axios.get(
+              `https://nominatim.openstreetmap.org/reverse?lat=${position[0]}&lon=${position[1]}&format=json`
+            );
+            setAddress((prev) => ({
+              ...prev,
+              city: result.data.address?.city || prev.city,
+              state: result.data.address?.state || prev.state,
+              pincode: result.data.address?.postcode || prev.pincode,
+              fullAddress: result.data.display_name || prev.fullAddress,
+            }));
+          } catch (error) {
+            console.log(error);
+          }
+        };
+        fetchAddress();
+      }, [position]);
 
-  const DraggableMarker: React.FC = () => {
-    const map = useMap();
-
-    useEffect(() => {
-      map.setView(position as LatLngExpression, 15, { animate: true });
-    }, [position, map]);
-
-    useEffect(() => {
-      const fetchAddress = async () => {
-        if (!position) {
-          return;
-        }
-        try {
-          const result = await axios.get(
-            `https://nominatim.openstreetmap.org/reverse?lat=${position[0]}&lon=${position[1]}&format=json`
-          );
-          setAddress((prev) => ({
-            ...prev,
-            city: result.data.address?.city || prev.city,
-            state: result.data.address?.state || prev.state,
-            pincode: result.data.address?.postcode || prev.pincode,
-            fullAddress: result.data.display_name || prev.fullAddress,
-          }));
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      fetchAddress();
-    }, [position]);
-
-    return (
-      <Marker
-        icon={markerIcon}
-        position={position as LatLngExpression}
-        draggable={true}
-        eventHandlers={{
-          dragend: (e: L.LeafletEvent) => {
-            const marker = e.target as L.Marker;
-            const { lat, lng } = marker.getLatLng();
-            setPosition([lat, lng]);
-          },
-        }}
-      />
-    );
-  };
+  
 
   const handleSearchQuery = async () => {
     setSearchLoading(true);
+    const {OpenStreetMapProvider}= await import("leaflet-geosearch")
     const provider = new OpenStreetMapProvider();
     const results = await provider.search({ query: searchQuery });
     if (results) {
@@ -157,11 +130,10 @@ const Checkout = () => {
       return;
     }
     if (!position) {
-      console.log("Location not available");
       return;
     }
     if(!userData?._id){
-      console.log("WAIT FOR SOME TIME");
+      
       return;
     }
 
@@ -197,11 +169,10 @@ const Checkout = () => {
 
   const handleOnlinePayment=async()=>{
     if (!position) {
-      console.log("Location not available");
       return;
     }
      if(!userData?._id){
-      console.log("WAIT FOR SOME TIME");
+      
       return;
     }
     try{
@@ -391,18 +362,7 @@ const Checkout = () => {
 
             <div className="relative mt-6 h-[330px] rounded-xl overflow-hidden border border-gray-200 shadow-inner">
               {position && (
-                <MapContainer
-                  center={position as LatLngExpression}
-                  zoom={13}
-                  scrollWheelZoom={true}
-                  className="w-full h-full"
-                >
-                  <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  <DraggableMarker />
-                </MapContainer>
+                <CheckoutMap position={position} setPosition={setPosition}/>
               )}
               <motion.button
                 whileTap={{ scale: 0.93 }}

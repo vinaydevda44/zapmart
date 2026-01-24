@@ -8,23 +8,32 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { orderId: string } }
+  context: { params: Promise<{ orderId: string }> }
 ) {
   try {
     await connectDb();
-    const { orderId } = await params;
 
+    const { orderId } = await context.params;
     const { status } = await req.json();
 
     const order = await Order.findById(orderId).populate("user");
     if (!order) {
-      return NextResponse.json({ message: "Order not found" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Order not found" },
+        { status: 400 }
+      );
     }
 
     order.status = status;
-    let deliveryBoysPayload: any = [];
-    if (status === "out of delivery" && !order.assignment) {
+
+    let deliveryBoysPayload: any[] = [];
+
+    if (
+      status?.toLowerCase() === "out of delivery" &&
+      !order.assignment
+    ) {
       const { latitude, longitude } = order.address;
+
       const nearByDeliveryBoys = await User.find({
         role: "deliveryBoy",
         location: {
@@ -46,6 +55,7 @@ export async function POST(
       }).distinct("assignedTo");
 
       const busyIdSet = new Set(busyIds.map((b) => String(b)));
+
       const availableDeliveryBoys = nearByDeliveryBoys.filter(
         (b) => !busyIdSet.has(String(b._id))
       );
@@ -54,9 +64,13 @@ export async function POST(
 
       if (!candidates.length) {
         await order.save();
-        await emitEventHandler("order-status-update",{orderId:order._id,status:order.status})
+        await emitEventHandler("order-status-update", {
+          orderId: order._id,
+          status: order.status,
+        });
+
         return NextResponse.json(
-          { message: "there is no available Delivery boys" },
+          { message: "There are no available delivery boys" },
           { status: 200 }
         );
       }
@@ -67,12 +81,16 @@ export async function POST(
         status: "broadcasted",
       });
 
-      await deliveryAssignment.populate("order")
+      await deliveryAssignment.populate("order");
 
-      for(const boyId of candidates){
-        const boy=await User.findById(boyId)
-        if(boy.socketId){
-          await emitEventHandler("new-assignment",deliveryAssignment,boy.socketId)
+      for (const boyId of candidates) {
+        const boy = await User.findById(boyId);
+        if (boy?.socketId) {
+          await emitEventHandler(
+            "new-assignment",
+            deliveryAssignment,
+            boy.socketId
+          );
         }
       }
 
@@ -85,26 +103,29 @@ export async function POST(
         latitude: b.location.coordinates[1],
         longitude: b.location.coordinates[0],
       }));
-
-      await deliveryAssignment.populate("order");
     }
 
     await order.save();
     await order.populate("user");
 
-     await emitEventHandler("order-status-update",{orderId:order._id,status:order.status})
+    await emitEventHandler("order-status-update", {
+      orderId: order._id,
+      status: order.status,
+    });
 
     return NextResponse.json(
       {
-        assignment: order.assignment?._id,
+        assignment: order.assignment ?? null,
         availableBoys: deliveryBoysPayload,
       },
       { status: 200 }
     );
   } catch (error) {
+    console.error("Update order status error:", error);
+
     return NextResponse.json(
       {
-        message: `Error at update-order-status:${error}`,
+        message: "Error occurred while updating order status",
       },
       { status: 500 }
     );

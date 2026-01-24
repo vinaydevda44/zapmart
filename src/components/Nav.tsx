@@ -1,13 +1,27 @@
 "use client";
 
 import { RootState } from "@/redux/store";
-import {Boxes,ClipboardCheck,Cross,LogOut,Menu,Package,Plus,PlusCircle,Search,ShoppingCartIcon,User,X,} from "lucide-react";
+import {
+  Boxes,
+  ClipboardCheck,
+  Cross,
+  LogOut,
+  Menu,
+  Package,
+  Plus,
+  PlusCircle,
+  Search,
+  ShoppingCartIcon,
+  User,
+  X,
+} from "lucide-react";
 import mongoose from "mongoose";
 import { AnimatePresence, motion } from "motion/react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useSelector } from "react-redux";
 
@@ -26,9 +40,11 @@ const Nav = ({ user }: { user: IUser }) => {
 
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const {cartData}=useSelector((state:RootState)=>state.cart)
+  const { cartData } = useSelector((state: RootState) => state.cart);
 
   const profileDropDown = useRef<HTMLDivElement>(null);
+  const [search, setSearch] = useState("");
+  const router=useRouter();
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -42,6 +58,19 @@ const Nav = ({ user }: { user: IUser }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleSearch = (e: FormEvent) => {
+    e.preventDefault();
+    const query = search.trim();
+    if (!query) {
+      return router.push("/");
+    }
+
+    router.push(`/?q=${encodeURIComponent(query)}`)
+    setSearch("");
+    setSearchBarOpen(false);
+
+  };
 
   const sideBar = menuOpen
     ? createPortal(
@@ -67,23 +96,37 @@ const Nav = ({ user }: { user: IUser }) => {
               </button>
             </div>
 
-            <div className="flex items-center gap-3 p-3 mt-3 rounded-xl bg-white/10 hover:bg-white/15
-            transition-all shadow-inner">
+            <div
+              className="flex items-center gap-3 p-3 mt-3 rounded-xl bg-white/10 hover:bg-white/15
+            transition-all shadow-inner"
+            >
+              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-green-400/60 shadow-lg">
+                {user.image ? (
+                  <Image
+                    src={user.image}
+                    alt="user"
+                    fill
+                    className="object-cover rounded-full "
+                  />
+                ) : (
+                  <User />
+                )}
+              </div>
 
-           <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-green-400/60 shadow-lg"> 
-            {user.image ? (<Image src={user.image} alt="user" fill  className="object-cover rounded-full "/> ): (<User />)}
-            </div>
-
-            <div>
-              <h2 className="text-lg font-semibold text-white">{user.name}</h2>
-              <p className="text-xs text-green-200 capitalize tracking-wide">{user.role}</p>
-            </div>
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  {user.name}
+                </h2>
+                <p className="text-xs text-green-200 capitalize tracking-wide">
+                  {user.role}
+                </p>
+              </div>
             </div>
 
             <div className="flex flex-col gap-3 font-medium mt-6">
-               <Link
+              <Link
                 href={"/admin/add-grocery"}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20
+                className="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20
                hover:pl-4 transition-all"
               >
                 <PlusCircle className="w-5 h-5" />
@@ -91,7 +134,7 @@ const Nav = ({ user }: { user: IUser }) => {
               </Link>
               <Link
                 href={"/admin/view-grocery"}
-               className="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20
+                className="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20
                hover:pl-4 transition-all"
               >
                 <Boxes className="w-5 h-5" />
@@ -99,7 +142,7 @@ const Nav = ({ user }: { user: IUser }) => {
               </Link>
               <Link
                 href={"/admin/manage-orders"}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20
+                className="flex items-center gap-3 p-3 rounded-lg bg-white/10 hover:bg-white/20
                hover:pl-4 transition-all"
               >
                 <ClipboardCheck className="w-5 h-5" />
@@ -107,15 +150,17 @@ const Nav = ({ user }: { user: IUser }) => {
               </Link>
             </div>
             <div className="my-5 border-t border-white/20 "></div>
-            <div className="flex items-center gap-3 text-red-300 font-semibold mt-auto hover:bg-500/20 p-3
-            rounded-lg transition-all" onClick={async()=>await signOut({callbackUrl:"/"})}>
-              <LogOut className="w-5 h-5 text-red-300"/>
+            <div
+              className="flex items-center gap-3 text-red-300 font-semibold mt-auto hover:bg-500/20 p-3
+            rounded-lg transition-all"
+              onClick={async () => await signOut({ callbackUrl: "/" })}
+            >
+              <LogOut className="w-5 h-5 text-red-300" />
               Log Out
             </div>
-           
           </motion.div>
         </AnimatePresence>,
-        document.body
+        document.body,
       )
     : null;
 
@@ -131,11 +176,16 @@ const Nav = ({ user }: { user: IUser }) => {
         Zapmart
       </Link>
       {user.role == "user" && (
-        <form className="hidden md:flex items-center bg-white rounded-full px-4 py-2 w-1/2 max-w-lg shadow-md">
+        <form
+          className="hidden md:flex items-center bg-white rounded-full px-4 py-2 w-1/2 max-w-lg shadow-md"
+          onSubmit={handleSearch}
+        >
           <Search className="text-gray-500 w-5 h-5 mr-2" />
           <input
             placeholder="Search groceries..."
             className="w-full outline-none text-gray-700 placeholder-gray-400"
+            onChange={(e) => setSearch(e.target.value)}
+            value={search}
           />
         </form>
       )}
@@ -291,11 +341,13 @@ const Nav = ({ user }: { user: IUser }) => {
                 bg-white rounded-full shadow-lg z-40 flex items-center px-4 py-2"
               >
                 <Search className="text-gray-500 w-5 h-5 mr-2" />
-                <form className="grow ">
+                <form className="grow " onSubmit={handleSearch}>
                   <input
                     type="text"
                     className="w-full outline-none text-gray-700"
                     placeholder="Search groceries..."
+                    onChange={(e) => setSearch(e.target.value)}
+            value={search}
                   />
                 </form>
                 <button onClick={() => setSearchBarOpen(false)}>
