@@ -96,7 +96,8 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span
+
+          {status!="delivered" &&  <span
             className={`px-3 py-1 text-xs font-semibold rounded-full border ${
               order.isPaid
                 ? "bg-green-100 text-green-700 border-green-300"
@@ -104,7 +105,8 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
             }`}
           >
             {order.isPaid ? "Paid" : "Unpaid"}
-          </span>
+          </span>}
+         
           <span
             className={`px-3 py-1 text-xs font-semibold border rounded-full ${getStatusColor(
               status
@@ -115,7 +117,7 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
         </div>
       </div>
 
-      <div className="space-y-4 p-5">
+       <div className="space-y-4 p-5">
         {order.paymentMethod == "cod" ? (
           <div className="flex items-center gap-2 text-gray-700 text-sm">
             <Truck size={16} className="text-green-600" />
@@ -128,7 +130,8 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
           </div>
         )}
         
-      {order.assignDeliveryBoy && <> <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl 
+        {status !="delivered" && <div>
+          {order.assignDeliveryBoy && <> <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl 
           p-4 flex items-center justify-between">
             <div className="flex items-center gap-3 text-sm text-gray-700">
               <UserCheck className="text-blue-600" size={18}/>
@@ -150,7 +153,7 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
             </button>
             </>
             }
-
+          </div>}
             
         <div className="flex items-center gap-2 text-gray-700 text-sm">
             <MapPin size={16} className="text-green-600" />
@@ -209,7 +212,9 @@ const UserOrderCard = ({ order }: { order: IOrder }) => {
             </div>
         </div>
 
-      </div>
+      </div> 
+
+      
     </motion.div>
   );
 };

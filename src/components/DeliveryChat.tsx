@@ -2,7 +2,7 @@
 import { getSocket } from "@/lib/socket";
 import { IMessage } from "@/models/message.model";
 import axios from "axios";
-import { Send } from "lucide-react";
+import { Loader, Send, Sparkle } from "lucide-react";
 import mongoose from "mongoose";
 import { AnimatePresence } from "motion/react";
 import React, { useEffect, useRef, useState } from "react";
@@ -13,23 +13,25 @@ type props = {
 };
 
 const DeliveryChat = ({ orderId, deliveryBoyId }: props) => {
-
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const chatBoxRef=useRef<HTMLDivElement>(null);
+  const chatBoxRef = useRef<HTMLDivElement>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [loading,setLoading]=useState(false)
+
 
   useEffect(() => {
     const socket = getSocket();
     socket.emit("join-room", orderId);
-      socket.on("send-message",(message)=>{
-        if(message.roomId ===orderId){
-            setMessages((prev)=>[...prev!,message])
-        }  
-    })
+    socket.on("send-message", (message) => {
+      if (message.roomId === orderId) {
+        setMessages((prev) => [...prev!, message]);
+      }
+    });
 
-    return ()=>{
-        socket.off("send-message");
-    }
+    return () => {
+      socket.off("send-message");
+    };
   }, []);
 
   const sendMsg = () => {
@@ -44,7 +46,7 @@ const DeliveryChat = ({ orderId, deliveryBoyId }: props) => {
       }),
     };
     socket.emit("send-message", message);
-  
+
     setNewMessage("");
   };
 
@@ -62,15 +64,59 @@ const DeliveryChat = ({ orderId, deliveryBoyId }: props) => {
     getAllMessages();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     chatBoxRef.current?.scrollTo({
-        top:chatBoxRef.current.scrollHeight,
-        behavior:"smooth"
-    })
-  },[messages])
+      top: chatBoxRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages]);
+
+  const getSuggestion= async()=>{
+    setLoading(true)
+    try{
+      const lastMessage=messages.filter(m=>m.senderId!==deliveryBoyId)?.at(-1)
+      const result=await axios.post("/api/chat/ai-suggestions",{
+        message:lastMessage?.text,
+        role:"delivery_boy"
+      })
+      setSuggestions(result.data.suggestions || [])
+      setLoading(false)
+      
+    }
+    catch(error){
+      console.log(error)
+      setLoading(false)
+
+    }
+  }
 
   return (
     <div className="bg-white rounded-3xl shadow-lg border p-4 h-107.5 flex flex-col">
+      <div className="flex justify-between items-center mb-3">
+        <span>Quick Replies</span>
+        <motion.button
+        onClick={getSuggestion}
+        disabled={loading}
+          whileTap={{ scale: 0.9 }}
+          className="px-3 py-1 text-xs flex items-center gap-1 bg-purple-100 text-purple-700 rounded-full shadow-sm border border-purple-200 cursor-pointer"
+        >
+          <Sparkle size={14} />
+          {loading ? <Loader className="w-5 h-5 animate-spin"/>:"AI suggest"}
+        </motion.button>
+      </div>
+      <div className="flex gap-2 flex-wrap mb-3">
+        {suggestions.map((v, i) => (
+          <motion.div
+            key={i}
+            whileTap={{ scale: 0.92 }}
+            className="px-3 py-1 text-xs bg-green-50 border border-green-200 text-green-700 rounded-full cursor-pointer"
+            onClick={() => setNewMessage(v)}
+          >
+            {v}
+          </motion.div>
+        ))}
+      </div>
+
       <div className="flex-1 overflow-y-auto p-2 space-y-3" ref={chatBoxRef}>
         <AnimatePresence>
           {messages?.map((msg, index) => (
@@ -90,8 +136,10 @@ const DeliveryChat = ({ orderId, deliveryBoyId }: props) => {
                                 : "bg-gray-100 text-gray-800 rounded-bl-none"
                             }`}
               >
-                <p >{msg.text}</p>
-                <p className="text-[10px] opacity-70 mt-1 text-right">{msg.time}</p>
+                <p>{msg.text}</p>
+                <p className="text-[10px] opacity-70 mt-1 text-right">
+                  {msg.time}
+                </p>
               </div>
             </motion.div>
           ))}

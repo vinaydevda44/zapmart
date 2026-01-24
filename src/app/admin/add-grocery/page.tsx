@@ -101,9 +101,9 @@ const AddGrocery = () => {
                     onChange={(e)=>setCategory(e.target.value)}
                     value={category}>
                         <option value="">Select Category</option>
-                        {categories.map(cat=>
+                        {categories.map((cat,i)=>
                         (
-                            <option value={cat} key={cat}>{cat}</option>
+                            <option value={cat} key={i}>{cat}</option>
                         ))}
                     </select>
                 </div>
@@ -114,9 +114,9 @@ const AddGrocery = () => {
                     onChange={(e)=>setUnit(e.target.value)}
                     value={unit}>
                         <option value="">Select Category</option>
-                        {units.map(cat=>
+                        {units.map((cat,i)=>
                         (
-                            <option value={cat} key={cat}>{cat}</option>
+                            <option value={cat} key={i}>{cat}</option>
                         ))}
                     </select>
                 </div>
