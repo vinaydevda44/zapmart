@@ -7,15 +7,15 @@ import React, { useEffect, useState } from "react";
 import UserOrderCard from "@/components/UserOrderCard";
 import { getSocket } from "@/lib/socket";
 import { IUser } from "@/models/user.model";
-import mongoose from "mongoose";
+
 
 
 interface IOrder {
-  _id?: mongoose.Types.ObjectId;
-  user: mongoose.Types.ObjectId;
+  _id?: string
+  user: string
   items: [
     {
-      grocery: mongoose.Types.ObjectId;
+      grocery: string
       name: string;
       price: string;
       unit: string;
@@ -36,7 +36,7 @@ interface IOrder {
     longitude: number;
   };
   assignDeliveryBoy?: IUser
-  assignment?:mongoose.Types.ObjectId
+  assignment?:string
   isPaid:boolean
   status: "pending" | "out of delivery" | "delivered";
   createdAt?: Date;

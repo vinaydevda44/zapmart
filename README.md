@@ -1,79 +1,117 @@
-# Zapmart 🚚🛒
+Zapmart 🚚🛒
 
-Zapmart is a real-time delivery web application currently under development.
-It is designed to connect users, admins, and delivery partners in a single
-platform for ordering and delivering grocery products efficiently.
+Zapmart is a real-time grocery delivery web application that connects customers, admins, and delivery partners on a single platform for smooth ordering and delivery management.
 
----
+The application focuses on real-time order updates, secure payments, and role-based dashboards.
 
-## Status
-🚧 **Work in Progress**  
-This project is actively being developed and currently runs on a local machine.
+🌐 Live Demo
 
----
+🔗 Deployed on Vercel:
+https://zapmart-one.vercel.app/
 
-## Project Overview
+📌 Project Overview
 
-Zapmart allows users to browse products and place orders.
-Admins manage products and orders, and delivery partners will handle deliveries
-based on order status updates in real time.
+Zapmart allows users to browse grocery products and place orders online.
+Admins manage products and orders through a centralized dashboard.
+Delivery partners handle deliveries with real-time updates powered by Socket.IO.
 
----
+👥 User Roles
 
-## User Roles
+User (Customer)
 
-- User (Customer)
-- Admin
-- Delivery Partner
+Admin
 
----
+Delivery Partner
 
-## Current Features (Implemented / In Progress)
+🚀 Features
+👤 User (Customer)
 
-### User
-- Browse listed grocery products
-- Place orders
-- Payment options:
-  - Cash on Delivery
-  - Online payment using Stripe
+Browse grocery products
 
-### Admin
-- Add and manage grocery products
-- View all orders
-- Update and manage order status
+Place orders
 
-### Delivery Partner
-- 🚧 Under development
-- Planned features:
-  - Accept or reject delivery requests
-  - Deliver orders
-  - View income and delivery dashboard
+View order status in real time
 
----
+Payment options:
 
-## Tech Stack
+Cash on Delivery (COD)
 
-### Frontend
-- Next.js
-- TypeScript
-- Tailwind CSS
-- Framer Motion
-- Redux
-- Leaflet (for map & location handling)
+Online payment using Stripe
 
-### Backend
-- Next.js API routes
-- MongoDB
+🛠️ Admin
 
-### Authentication
-- Auth.js (NextAuth)  
-  - Google and other provider sign-in/sign-out
+Add, update, and delete grocery products
 
-### Other Tools & Services
-- Stripe (online payments)
-- Cloudinary (image storage)
+View all customer orders
 
----
+Update order status
+
+Real-time order updates using Socket.IO
+
+Admin Dashboard:
+
+View total orders
+
+Track total income
+
+Monitor order and payment status
+
+🚚 Delivery Partner
+
+Accept or reject delivery requests
+
+View assigned orders
+
+Update delivery status in real time
+
+Delivery dashboard
+
+Income tracking
+
+⚡ Real-Time Functionality
+
+Zapmart uses Socket.IO to enable:
+
+Instant order status updates
+
+Live admin dashboard updates
+
+Real-time delivery partner notifications
+
+🧑‍💻 Tech Stack
+Frontend
+
+Next.js
+
+TypeScript
+
+Tailwind CSS
+
+Redux
+
+Framer Motion
+
+Leaflet (Maps & location handling)
+
+Backend
+
+Next.js API Routes
+
+MongoDB
+
+Authentication
+
+Auth.js (NextAuth)
+
+Google sign-in and sign-out
+
+Other Tools & Services
+
+Stripe (Online payments)
+
+Cloudinary (Image storage)
+
+Socket.IO (Real-time communication)
 
 ## Installation & Setup (Local)
 
@@ -96,3 +134,9 @@ CLOUDINARY_API_SECRET=YOUR_CLOUDINARY_API_SECRET
 STRIPE_SECRET_KEY=YOUR_STRIPE_SECRET_KEY
 NEXT_BASE_URL=BASE_URL
 STRIPE_WEBHOOK_SECRET=YOUR_STRIPE_WEBHOOK_SECRET
+NEXT_PUBLIC_SOCKET_SERVER=SOCKET_SERVER_URL
+
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+
+EMAIL=YOUR_EMAIL
+PASSWORD=YOUR_APP_PASSWORD_OF_GOOGLE

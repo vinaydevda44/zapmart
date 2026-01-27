@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import L, { LatLngExpression } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import axios from 'axios';
+
 
 
 const markerIcon = new L.Icon({

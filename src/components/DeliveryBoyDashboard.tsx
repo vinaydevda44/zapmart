@@ -163,7 +163,7 @@ const DeliveryBoyDashboard = ({ earning }: { earning: number }) => {
           <h2 className="text-2xl font-bold text-gray-800">No Active Deliveries🚛</h2>
           <p className="text-gray-500 mb-5">Stay Online to receive new orders</p>
           <div className="bg-white border rounded-xl shadow-xl p-6">
-            <h2 className="font-medium text-green-700 mb-2">Today's Performance</h2>
+            <h2 className="font-medium text-green-700 mb-2">Today Performance</h2>
              <ResponsiveContainer width='100%' height={300}>
                         <BarChart data={todayEarning}>
                           <XAxis dataKey="name"/>
@@ -202,7 +202,7 @@ const DeliveryBoyDashboard = ({ earning }: { earning: number }) => {
           </div>
           <DeliveryChat
             orderId={activeOrder.order._id}
-            deliveryBoyId={userData?._id!}
+            deliveryBoyId={userData?._id?.toString()!}
           />
 
           <div className="mt-6 bg-white rounded-xl border shadow p-6">

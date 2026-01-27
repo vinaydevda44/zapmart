@@ -5,18 +5,17 @@ import { IUser } from "@/models/user.model";
 import { RootState } from "@/redux/store";
 import axios from "axios";
 import { ArrowLeft, Loader, Send, Sparkle } from "lucide-react";
-import mongoose from "mongoose";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { AnimatePresence, motion } from "motion/react";
 import { IMessage } from "@/models/message.model";
 interface IOrder {
-  _id?: mongoose.Types.ObjectId;
-  user: mongoose.Types.ObjectId;
+  _id?: string
+  user: string
   items: [
     {
-      grocery: mongoose.Types.ObjectId;
+      grocery: string
       name: string;
       price: string;
       unit: string;
@@ -37,7 +36,7 @@ interface IOrder {
     longitude: number;
   };
   assignDeliveryBoy?: IUser;
-  assignment?: mongoose.Types.ObjectId;
+  assignment?: string
   isPaid: boolean;
   status: "pending" | "out of delivery" | "delivered";
   createdAt?: Date;
@@ -157,7 +156,7 @@ const TrackOrder = () => {
   const getSuggestion= async()=>{
       setLoading(true)
       try{
-        const lastMessage=messages.filter(m=>m.senderId!==userData?._id)?.at(-1)
+        const lastMessage=messages.filter(m=>m.senderId.toString()!==userData?._id)?.at(-1)
         const result=await axios.post("/api/chat/ai-suggestions",{
           message:lastMessage?.text,
           role:"user"
@@ -240,12 +239,12 @@ const TrackOrder = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className={`flex ${msg.senderId == userData?._id ? "justify-end" : "justify-start"}`}
+                    className={`flex ${msg.senderId.toString() == userData?._id ? "justify-end" : "justify-start"}`}
                   >
                     <div
                       className={`px-4 py-2 max-w-[75%] rounded-2xl shadow
                             ${
-                              msg.senderId == userData?._id
+                              msg.senderId.toString() == userData?._id
                                 ? "bg-green-600 text-white rounded-br-none"
                                 : "bg-gray-100 text-gray-800 rounded-bl-none"
                             }`}

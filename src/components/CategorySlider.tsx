@@ -4,8 +4,8 @@ import React, { useEffect, useRef, useState } from "react";
 import {motion} from "motion/react"
 
 const CategorySlider = () => {
-    const [showLeft,setShowLeft]=useState<Boolean>()
-    const [showRight,setShowRight]=useState<Boolean>()
+    const [showLeft,setShowLeft]=useState<boolean>()
+    const [showRight,setShowRight]=useState<boolean>()
     const scrollRef=useRef<HTMLDivElement>(null)
     const scroll=(direction:"left" |"right")=>{
         if(!scrollRef.current){

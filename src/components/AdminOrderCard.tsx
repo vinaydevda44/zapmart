@@ -5,16 +5,15 @@ import { motion } from "motion/react";
 import { ChevronDown, ChevronUp, CreditCard, MapPin, Package, Phone, Truck, User, UserCheck } from "lucide-react";
 import Image from "next/image";
 import axios from "axios";
-import mongoose from "mongoose";
 import { IUser } from "@/models/user.model";
 import { getSocket } from "@/lib/socket";
 
 interface IOrder {
-  _id?: mongoose.Types.ObjectId;
-  user: mongoose.Types.ObjectId;
+  _id?: string
+  user: string
   items: [
     {
-      grocery: mongoose.Types.ObjectId;
+      grocery: string
       name: string;
       price: string;
       unit: string;
@@ -35,7 +34,7 @@ interface IOrder {
     longitude: number;
   };
   assignDeliveryBoy?: IUser
-  assignment?:mongoose.Types.ObjectId
+  assignment?:string
   isPaid:boolean
   status: "pending" | "out of delivery" | "delivered";
   createdAt?: Date;
