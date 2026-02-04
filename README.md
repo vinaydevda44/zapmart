@@ -11,9 +11,11 @@ https://zapmart-one.vercel.app/
 
 📌 Project Overview
 
-Zapmart allows users to browse grocery products and place orders online.
-Admins manage products and orders through a centralized dashboard.
-Delivery partners handle deliveries with real-time updates powered by Socket.IO.
+Users can browse grocery products and place orders online
+
+Admins manage products and orders through a centralized dashboard
+
+Delivery partners handle deliveries with real-time updates powered by Socket.IO
 
 👥 User Roles
 

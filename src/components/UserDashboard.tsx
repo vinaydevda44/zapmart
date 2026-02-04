@@ -2,7 +2,7 @@ import React from 'react'
 import HeroSection from './HeroSection'
 import CategorySlider from './CategorySlider'
 import connectDb from '@/lib/db'
-import Grocery, { IGrocery } from '@/models/grocery.model'
+import  { IGrocery } from '@/models/grocery.model'
 import GroceryItemCard from './GroceryItemCard'
 
 
@@ -20,7 +20,7 @@ const UserDashboard = async ({groceryList}:{groceryList:IGrocery[]}) => {
           {plainGrocery.map((item:any,index:number)=>(
         <GroceryItemCard key={index} item={item}/>
       ))}
-        </div>npm run buil
+        </div>
       </div>
       
     </div>
