@@ -7,6 +7,9 @@ import InitUser from "@/InitUser";
 export const metadata: Metadata = {
   title: "Zapmart | 10 minutes Delivery app",
   description: "10 minutes Delivery app",
+  icons:{
+    icon:'./public/icon.png'
+  },
 };
 
 export default function RootLayout({
