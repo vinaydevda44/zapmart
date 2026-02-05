@@ -2,8 +2,10 @@
 import { Apple, Baby, Box, Coffee, Cookie, Flame, Wheat, HomeIcon, Milk,Heart, Icon, ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import {motion} from "motion/react"
+import { useRouter } from "next/navigation";
 
 const CategorySlider = () => {
+    const router =useRouter()
     const [showLeft,setShowLeft]=useState<boolean>()
     const [showRight,setShowRight]=useState<boolean>()
     const scrollRef=useRef<HTMLDivElement>(null)
@@ -46,6 +48,10 @@ const CategorySlider = () => {
         return ()=>removeEventListener("scroll",checkScroll)
     },[])
 
+    const handleCategoryClick = (category: string) => {
+  router.push(`/?category=${encodeURIComponent(category)}`);
+};
+
   const categories = [
     { id: 1, name: "Fruits & Vegetables", icon: Apple, color: "bg-green-100" },
     { id: 2, name: "Dairy & Eggs", icon: Milk, color: "bg-yellow-100" },
@@ -83,6 +89,7 @@ const CategorySlider = () => {
                 
                 return <motion.div
                 key={cat.id}
+                 onClick={() => handleCategoryClick(cat.name)}
                  className={`min-w-[150px] md:min-w-[180px] flex flex-col items-center justify-center rounded-2xl
                 ${cat.color} shadow-md hover:shadow-xl transition-all cursor-pointer`}>
                     <div className="flex flex-col justify-center items-center p-5 ">

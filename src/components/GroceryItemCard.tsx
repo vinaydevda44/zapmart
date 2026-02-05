@@ -7,7 +7,7 @@ import { Minus, Plus, ShoppingCart } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { addToCart, decreaseQuantity, increaseQuantity } from '@/redux/cartSlice';
-import { animate } from 'motion';
+
 interface IGrocery{
     _id:string
     name:string,

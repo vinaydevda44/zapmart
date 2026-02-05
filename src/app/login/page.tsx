@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import {
   ArrowLeft,
   EyeIcon,
@@ -18,32 +18,36 @@ import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 
-
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const router=useRouter();
-  const session =useSession()
+  const router = useRouter();
+  const session = useSession();
 
-  const handleLogin= async (e:FormEvent)=>{
-    e.preventDefault()
-    setLoading(true)
-    try{
-        await signIn("credentials",{
-            email,password
-        })
-        router.push("/")
-        setLoading(false)
+  const handleLogin = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+        const res = await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+        });
+        setLoading(false);
+        if (res?.error) {
+          alert("Invalid credentials");
+        } else {
+          router.push("/");
+        }
+      }
+      catch (error) {
+      console.log(error);
+      setLoading(false);
     }
-    catch(error){
-        console.log(error)
-        setLoading(false)
-    }
-  }
-
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-6 py-10 bg-white relative">
@@ -65,12 +69,12 @@ const Login = () => {
       </motion.h1>
       <p className="text-gray-600 mb-8 flex items-center ">
         {" "}
-        Login to Zapmart 
+        Login to Zapmart
         <Leaf className="w-5 h-5 text-green-600" />
       </p>
 
       <motion.form
-      onSubmit={handleLogin}
+        onSubmit={handleLogin}
         className="flex flex-col gap-5 w-full max-w-sm"
         initial={{
           opacity: 0,
@@ -128,11 +132,7 @@ const Login = () => {
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
             >
-              {loading ? (
-                <Loader2 className="w-5 h-5 animate spin" />
-              ) : (
-                "Register"
-              )}
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Login"}
             </button>
           );
         })()}
@@ -144,20 +144,19 @@ const Login = () => {
         </div>
 
         <div
-            onClick={()=>signIn("google",{callbackUrl:"/"})}
+          onClick={() => signIn("google", { callbackUrl: "/" })}
           className="flex items-center justify-center gap-3 border border-gray-300 hover:bg-gray-50
         py-3 rounded-xl text-gray-700 font-medium transition-all duration-200"
         >
           <Image src={googleImage} width={25} height={25} alt="google" />
           Continue with google
         </div>
-
       </motion.form>
 
-       
-
-      <p className="cursor-pointer text-gray-600 mt-6 text-sm flex items-center gap-1" 
-      onClick={()=>router.push("/register")}>
+      <p
+        className="cursor-pointer text-gray-600 mt-6 text-sm flex items-center gap-1"
+        onClick={() => router.push("/register")}
+      >
         Want to create an account ?
         <LogIn className="w-4 h-4" />{" "}
         <span className="text-green-600">Sign up</span>

@@ -158,9 +158,9 @@ const DeliveryBoyDashboard = ({ earning }: { earning: number }) => {
   if (!activeOrder && assignments.length === 0) {
     const todayEarning = [{ name: "Today", earning, deliveries: earning / 40 }];
     return (
-      <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-white to-green-50 p-6">
-        <div className="max-w-md w-full text-center">
-          <h2 className="text-2xl font-bold text-gray-800">No Active Deliveries🚛</h2>
+      <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-white to-green-50 p-6 pt-20">
+        <div className="max-w-md w-full text-center ">
+          <h2 className="text-2xl font-bold text-gray-800 ">No Active Deliveries🚛</h2>
           <p className="text-gray-500 mb-5">Stay Online to receive new orders</p>
           <div className="bg-white border rounded-xl shadow-xl p-6">
             <h2 className="font-medium text-green-700 mb-2">Today Performance</h2>
